@@ -1,0 +1,12 @@
+
+---------Mandatory----------
+Adruino
+Multiplexer
+Relay (5V/12V)
+Moisture sensor
+Tempreature sensor(LM35)
+GSM/GPRS module(SIM800)
+
+--------------------------------------
+PH and Conductivity sensor (if needed)
+Wifi or any wireless module (if to create network of sensors)
