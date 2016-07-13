@@ -1,2 +1,0 @@
-# SmartFarm
-Final year project
