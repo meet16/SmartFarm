@@ -1,0 +1,21 @@
+obj_micaz/framer-802154.o: \
+ /home/user/contiki/core/net/mac/framer-802154.c \
+ /home/user/contiki/core/net/mac/framer-802154.h \
+ /home/user/contiki/core/net/mac/framer.h \
+ /home/user/contiki/core/net/mac/frame802154.h \
+ /home/user/contiki/platform/micaz/contiki-conf.h \
+ /home/user/contiki/cpu/avr/avrdef.h \
+ /home/user/contiki/platform/micaz/platform-conf.h \
+ /home/user/contiki/core/net/rime/rimeaddr.h \
+ /home/user/contiki/core/net/packetbuf.h \
+ /home/user/contiki/core/lib/random.h
+ /home/user/contiki/core/net/mac/framer-802154.c :
+ /home/user/contiki/core/net/mac/framer-802154.h :
+ /home/user/contiki/core/net/mac/framer.h :
+ /home/user/contiki/core/net/mac/frame802154.h :
+ /home/user/contiki/platform/micaz/contiki-conf.h :
+ /home/user/contiki/cpu/avr/avrdef.h :
+ /home/user/contiki/platform/micaz/platform-conf.h :
+ /home/user/contiki/core/net/rime/rimeaddr.h :
+ /home/user/contiki/core/net/packetbuf.h :
+ /home/user/contiki/core/lib/random.h :
