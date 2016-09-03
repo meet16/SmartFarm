@@ -26,6 +26,9 @@ symbol.*
 *.dll
 *.so
 *.so.*
+
+#Visual Code
+.vscode
 *.dylib
 
 # Executables
