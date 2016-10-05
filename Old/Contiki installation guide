@@ -1,0 +1,36 @@
+Source : "http://anrg.usc.edu/contiki/index.php/Installation"
+		 "https://akhila12ca.wordpress.com/2014/11/15/contiki-how-to-write-hello-world-program-in-micaz-mote/"
+
+steps for installing contiki in ubuntu
+
+$ wget http://downloads.sourceforge.net/project/contiki/Contiki/Contiki%202.7/contiki-2.7.zip
+$ unzip contiki-2.7.zip
+$ mv contiki-2.7 contiki
+$ sudo apt-get install build-essential binutils-msp430 gcc-msp430 msp430-libc msp430mcu mspdebug binutils-avr gcc-avr gdb-avr avr-libc avrdude openjdk-7-jdk openjdk-7-jre ant libncurses5-dev
+
+
+
+installing uisp source : "https://sourceforge.net/p/contiki/mailman/message/31518424/"
+uisp : "http://kasun.ch.googlepages.com/uisp.tar.gz"
+$ tar -xvzf uisp.tar.gz
+$ cd uisp
+$ ./bootstrap
+$ ./configure
+$	make
+$ sudo make install
+
+
+Reading from ttyUSB1
+$ sudo apt-get install minicom
+$ minicom -8 -b9400 -D/dev/ttyUSB1
+
+Error : Direct Parallel Access not defined
+
+$ sudo chmod 777 /dev/ttyUSB*
+
+
+Error : Cooja not been able to run
+
+In cooja/
+$ git submodule update --init
+ 
