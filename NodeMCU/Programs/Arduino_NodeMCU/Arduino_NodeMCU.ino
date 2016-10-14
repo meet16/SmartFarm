@@ -22,5 +22,5 @@ void loop() {
   Serial.println(temp);
   delay(2000);
   digitalWrite(13,LOW);
-  
+  delay(5000);
 }

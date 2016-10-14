@@ -1,8 +1,6 @@
 #include <WiFiUdp.h>
-#include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 
-int status = WL_IDLE_STATUS;
 const char *ssid = "SmartFarm";
 const char *password = "A3B4NJshb*903dfnHx";
 
@@ -15,8 +13,6 @@ unsigned int localPort = 9999;      // local port to listen on
 String temp;
 char packetBuffer[100]; //buffer to hold incoming packet
 char  ReplyBuffer[100];       // a string to send back
-StaticJsonBuffer<100>  jsonBuffer;
-JsonObject& root = jsonBuffer.parseObject(packetBuffer);
 
 WiFiUDP Udp;
 

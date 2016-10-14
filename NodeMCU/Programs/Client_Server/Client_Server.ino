@@ -7,7 +7,6 @@ WiFiUDP port2;
 
 const char *ssid = "SmartFarm";
 const char *password = "A3B4NJshb*903dfnHx";
-//StaticJsonBuffer<100>  jsonBuffer;
 
 unsigned int localPort = 9999;      // local port to listen on
 IPAddress serverIP(192, 168, 0, 1); 
@@ -19,10 +18,8 @@ char  ReplyBuffer[100];       // a string to send back
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
   pinMode(13,OUTPUT);
-  //digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
   Serial.begin(9600);
-  //fromArduino.begin(9600);
   delay(10);
   Serial.print("\nConnecting to ");
   Serial.println(ssid);
