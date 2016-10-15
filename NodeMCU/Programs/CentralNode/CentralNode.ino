@@ -1,5 +1,9 @@
 #include <SoftwareSerial.h>
+#define TOTALNODE 10
+
 SoftwareSerial gprsSerial(7, 8);
+
+float finalTemp, finalLight,finalMoisture;
 
 void setup()
 {
@@ -37,6 +41,51 @@ void setup()
 
 void loop()
 {
+  int savedTemp[TOTALNODE],savedLight[TOTALNODE],savedMoisture[TOTALNODE];
+  senseSensors(savedTemp,savedLight,savedMoisture);
+  findAvg(savedTemp,savedLight,savedMoisture);
+  if(takeDecision() == 1){
+    //Starttimer
+    while(takeDecision() == 1){
+      senseSensors(savedTemp,savedLight,savedMoisture);
+      findAvg(savedTemp,savedLight,savedMoisture);
+    }
+    //Stop Timer
+  }
+    GSMSend();//Send Time as parameter also.  
+}
+
+void senseSensors(int savedTemp[],int savedLight[],int savedMoisture[]){
+
+   // Other way... When u know no of nodes
+  // To have this, while setting up the central node, u need to define the variable.
+  int i=0;
+  
+  for(i=0;i<TOTALNODE;i++){
+    
+      while(Serial.available() == 0);
+      String readings = Serial.readString();
+      Serial.println(readings);
+
+      int firstDelim = readings.indexOf(':');
+      int tempValue = readings.substring(0,firstDelim).toInt();
+      int secondDelim = readings.indexOf(':',firstDelim+1);
+      int lightValue = readings.substring(firstDelim+1,secondDelim).toInt();
+      int moistureValue =  readings.substring(secondDelim+1).toInt();
+
+      Serial.println(tempValue);
+      Serial.println(lightValue);
+      Serial.println(moistureValue);
+      
+      savedTemp[i] = tempValue;
+      savedLight[i] = lightValue;
+      savedMoisture[i] = moistureValue;
+
+      Serial.flush();
+  }
+  
+  /*
+  // One way t do this
   int allDone = 0;
   while(true){
     int count = 0;
@@ -51,9 +100,9 @@ void loop()
       String readings = Serial.readString();
       Serial.println(readings);
 
-      int firstDelim = readings.indexOf(';');
+      int firstDelim = readings.indexOf(':');
       int tempValue = readings.substring(0,firstDelim).toInt();
-      int secondDelim = readings.indexOf(';',firstDelim+1);
+      int secondDelim = readings.indexOf(':',firstDelim+1);
       int lightValue = readings.substring(firstDelim+1,secondDelim).toInt();
       int moistureValue =  readings.substring(secondDelim+1).toInt();
 
@@ -67,17 +116,34 @@ void loop()
     else
       break;
   }
-  findAvg();
-  if(takeDecision() == 1)
-    GSMSend();  
+  */
 }
 
-void findAvg(){
-  //Take all the arraylist entry and find avg. Store in global variables.
+void findAvg(int savedTemp[],int savedLight[],int savedMoisture[]){
+  int i=0;
+  int temp,light,moisture;
+  temp=light=moisture=0;
+  for(i=0;i<TOTALNODE;i++){
+    temp+=savedTemp[i];
+    light+=savedLight[i];
+    moisture+=savedMoisture[i];
+  }
+
+  finalTemp = temp/float(TOTALNODE);
+  finalLight = light/float(TOTALNODE);
+  finalMoisture = moisture/float(TOTALNODE);
 }
 
 int takeDecision(){
-  //based on threshold value give 1 or 0 as output
+  /*
+   * based on threshold value give 1 or 0 as output
+  //Some thing has to be found which can relate temperature and light with moisture
+  
+  if(finalMoisture < THRESHOLD_MOISTURE)
+    //turn motor on;
+
+  */
+  
   return 1;
 }
 void GSMSend(){
