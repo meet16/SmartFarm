@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-SoftwareSerial gprsSerial(7, 8);
+SoftwareSerial gprsSerial(12, 13);
 
 void setup()
 {

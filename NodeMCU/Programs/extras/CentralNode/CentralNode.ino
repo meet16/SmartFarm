@@ -1,12 +1,28 @@
+#include <core_build_options.h>
+#include <secTimer.h>
+#include <ArduinoJson.h>
 #include <SoftwareSerial.h>
 #define TOTALNODE 10
+#define FarmID SF001
 
 SoftwareSerial gprsSerial(7, 8);
+secTimer gsmTimer;
+secTimer moistureTimer;
 
-float finalTemp, finalLight,finalMoisture;
+long moistureTime, GSMTime;
+
+struct Threshold{
+  float temp;
+  float light;
+  float moisture;  
+};
+
+float finalTemp, finalLight, finalMoisture;
 
 void setup()
 {
+  Threshold thresholdValues;
+  gsmTimer.startTimer();
   gprsSerial.begin(19200);
   Serial.begin(19200);
 
@@ -46,13 +62,21 @@ void loop()
   findAvg(savedTemp,savedLight,savedMoisture);
   if(takeDecision() == 1){
     //Starttimer
+    moistureTimer.startTimer();
     while(takeDecision() == 1){
       senseSensors(savedTemp,savedLight,savedMoisture);
       findAvg(savedTemp,savedLight,savedMoisture);
     }
-    //Stop Timer
-  }
+    moistureTime = moistureTimer.readTimer();
+    moistureTimer.stopTimer();
+    
     GSMSend();//Send Time as parameter also.  
+  }
+
+  //Request data from server after 15 days
+  if (GSMTimer.readTimer() > 1296000){
+    GSMReceive();
+  }
 }
 
 void senseSensors(int savedTemp[],int savedLight[],int savedMoisture[]){
@@ -155,10 +179,73 @@ void GSMSend(){
    // set http param value
    //use global variable here to send data
    //Will need some token for unique identity of farm....so here think abt sqlite
-   gprsSerial.println("AT+HTTPPARA=\"URL\",\"http://helpinghandgj100596.comule.com/test.php?temp=1&light=2&moisture=2\"");
+   //gprsSerial.println("AT+HTTPPARA=\"URL\",\"http://helpinghandgj100596.comule.com/test.php?temp=1&light=2&moisture=2\"");
+   gprsSerial.println("AT+HTTPPARA=\"URL\",\"http://helpinghandgj100596.comule.com/test.php?ID=\"");
+   gprsSerial.println(FarmID);
+   gprsSerial.println("&temp=");
+   gprsSerial.println(finalTemp);
+   gprsSerial.println("&light=");
+   gprsSerial.println(finalLight);
+   gprsSerial.println("&moisture=");
+   gprsSerial.println(finalMoisture);
+   gprsSerial.println("&water=");
+   //water consume in 1 secound is 15000 milli-liter
+   gprsSerial.println(moistureTime*1500);
    delay(2000);
    toSerial();
 
+   // set http action type 0 = GET, 1 = POST, 2 = HEAD
+   gprsSerial.println("AT+HTTPACTION=0");
+   delay(6000);
+   toSerial();
+
+   // read server response
+   gprsSerial.println("AT+HTTPREAD"); 
+   delay(1000);
+   toSerial();
+
+   gprsSerial.println("");
+   gprsSerial.println("AT+HTTPTERM");
+   toSerial();
+   delay(300);
+
+   gprsSerial.println("");
+   delay(10000);
+}
+void GSMReceive(){
+  
+  
+  // initialize http service
+   gprsSerial.println("AT+HTTPINIT");
+   delay(2000); 
+   toSerial();
+
+   // set http param value
+   //use global variable here to send data
+   //Will need some token for unique identity of farm
+   gprsSerial.println("AT+HTTPPARA=\"URL\",\"http://helpinghandgj100596.comule.com/request.php?ID=\"");
+   gprsSerial.println(FarmID);
+   delay(2000);
+
+   char json[200];
+   int i = 0;
+   while(gprsSerial.available()!=0)
+   {
+    json[i++] = gprsSerial.read();
+   }
+   StaticJsonBuffer<200> jsonBuffer;
+   JsonObject& root = jsonBuffer.parseObject(json);
+
+   // Test if parsing succeeds.
+   if (!root.success()) {
+     Serial.println("parseObject() failed");
+     return;
+   }
+
+   thresholdValues.temp = root["Tempreature"];
+   thresholdValues.light = root["Light"];
+   thresholdValues.moisture = root["Moisture"];
+   
    // set http action type 0 = GET, 1 = POST, 2 = HEAD
    gprsSerial.println("AT+HTTPACTION=0");
    delay(6000);
